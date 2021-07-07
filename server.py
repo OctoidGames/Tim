@@ -1,10 +1,12 @@
 import socket
 import threading
+import requests
 
 
+PublicIP = (requests.get('http://ip.42.pl/raw').text)
 HEADER = 64
 PORT = 14677
-SERVER = socket.gethostbyname(socket.gethostname()) # gets local IP of machine
+SERVER = PublicIP
 ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "UwU I'm sowwy, buwt I gowtta go now~~"
