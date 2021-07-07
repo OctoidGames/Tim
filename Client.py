@@ -1,11 +1,10 @@
 import socket
 import threading
-import time
 
 
 HEADER = 64
 PORT = 14677
-SERVER = "127.0.1.1"
+SERVER = "45.76.62.81"
 ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "UwU I'm sowwy, buwt I gowtta go now~~"
