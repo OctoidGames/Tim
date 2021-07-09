@@ -1,2 +1,2 @@
-# servercode
-this is code to set up my vultr server
+# TIM
+Tim is a virtual assistant that is launched on a cloud server.
