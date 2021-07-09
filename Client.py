@@ -28,9 +28,14 @@ def send(msg):
         msg = client.recv(msg_length).decode(FORMAT)  # Waits for message
         print(f"[MESSAGE] '{msg}'")
 
-send("Hello World")
+#send("Hello World")
 
-send(DISCONNECT_MESSAGE)
+#send(DISCONNECT_MESSAGE)
 
 while(1==1):
-    pass
+    msg=input("Tell Tim:")
+    if not msg == "x":
+        send(msg)
+    else:
+        send(DISCONNECT_MESSAGE)
+

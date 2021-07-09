@@ -1,6 +1,7 @@
 import socket
 import threading
 import requests
+import wikipedia
 
 
 HEADER = 64
@@ -10,9 +11,76 @@ ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "UwU I'm sowwy, buwt I gowtta go now~~"
 
+Alts = {}
 
 server=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+
+
+def extract_alts():
+    f=open('Alts.txt','r')
+    for x in f:
+        wrd = ""
+        msgList = []
+        for a in range(len(x)):
+            chr = x[a]
+            if not chr == "\n":
+                if not chr == " ":
+                    wrd += chr
+                else:
+                    msgList.append(wrd)
+                    wrd = ""
+        msgList.append(wrd)
+        Alts.update({msgList[0]:msgList})
+
+
+def handle_message(msg):
+    msgList = []
+    wrd = ""
+    for a in range(len(msg)):
+        chr = msg[a]
+        if not chr == " ":
+            wrd+=chr
+        else:
+            msgList.append(wrd)
+            wrd = ""
+    msgList.append(wrd)
+    print("thinking. . . ")
+
+    command = msgList[0]
+    cmd=""
+    for cmd in Alts:
+        if command in Alts[cmd]:
+            command = cmd
+
+    if cmd == "x":
+        pass
+
+    if cmd == "Find":
+        pass
+
+    if cmd == "Search":
+        term = ""
+        for a in msgList:
+            if not a == msgList[0]:
+                term += a+" "
+        results = wikipedia.search(term)
+        if results == []:
+            return "No results found"
+        #print(results)
+        try:
+            page = wikipedia.page(results[0])
+            sum = wikipedia.summary(results[0], sentences=2)
+
+            try:
+                extra = f"did you mean: {results[1]}, {results[2]}, or {results[3]}"
+            except:
+                extra = ""
+
+            result = page.title + "\n" + sum + "\n" + page.url + "\n" + extra
+            return result
+        except:
+            return "something went wrong, maybe your serch term was an initialism"
 
 
 def send(conn, addr, msg):
@@ -34,10 +102,12 @@ def handle_client(conn, addr):
             msg_length = int(msg_length) # Converts received message length to usable format
             msg = conn.recv(msg_length).decode(FORMAT) # Waits for message
             if msg == DISCONNECT_MESSAGE: # Checks for disconnect message
-                connected = False # Closes loop
-            print(f"[MESSAGE] from @{addr}: '{msg}'")
-            REPLY = "message recieved"
-            send(conn, addr, REPLY ) # sends conformation
+                connected = False
+                break               # Closes loop
+            else:
+                print(f"[MESSAGE] from @{addr}: '{msg}'")
+                REPLY = handle_message(msg)
+                send(conn, addr, REPLY ) # sends conformation
     conn.close() # closes connection
     print("[INFO] Active conncetions:", threading.activeCount() - 2)
 
@@ -52,5 +122,7 @@ def start(): # handles new connections
         print("[INFO] Active conncetions:", threading.activeCount()-1)
 
 
+extract_alts()
+print("[STARTING] setting up personal tweaks")
 print("[STARTING] server is starting at",ADDR)
 start()
